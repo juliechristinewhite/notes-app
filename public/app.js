@@ -20776,6 +20776,10 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
+var _notesCard = require('./notesCard.js');
+
+var _notesCard2 = _interopRequireDefault(_notesCard);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -20790,12 +20794,45 @@ var App = function (_React$Component) {
 	function App() {
 		_classCallCheck(this, App);
 
-		return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+		var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
+
+		_this.state = {
+			notes: []
+		};
+		_this.showSidebar = _this.showSidebar.bind(_this);
+		_this.addNote = _this.addNote.bind(_this);
+		return _this;
 	}
 
 	_createClass(App, [{
+		key: 'showSidebar',
+		value: function showSidebar(e) {
+			e.preventDefault();
+			this.sidebar.classList.toggle("show");
+		}
+	}, {
+		key: 'addNote',
+		value: function addNote(e) {
+			e.preventDefault();
+			console.log("submitted");
+			var note = {
+				title: this.noteTitle.value,
+				text: this.noteText.value
+			};
+			var newNotes = Array.from(this.state.notes);
+			newNotes.push(note);
+			this.setState({
+				notes: newNotes
+			});
+			this.noteTitle.value = "";
+			this.noteText.value = "";
+			this.showSidebar(e);
+		}
+	}, {
 		key: 'render',
 		value: function render() {
+			var _this2 = this;
+
 			return _react2.default.createElement(
 				'div',
 				null,
@@ -20812,7 +20849,7 @@ var App = function (_React$Component) {
 						null,
 						_react2.default.createElement(
 							'a',
-							{ href: '' },
+							{ href: '', onClick: this.showSidebar },
 							'Add New Note'
 						)
 					)
@@ -20820,29 +20857,18 @@ var App = function (_React$Component) {
 				_react2.default.createElement(
 					'section',
 					{ className: 'notes' },
-					_react2.default.createElement(
-						'div',
-						{ className: 'noteCard' },
-						_react2.default.createElement('i', { className: 'fa fa-edit' }),
-						_react2.default.createElement('i', { className: 'fa fa-times' }),
-						_react2.default.createElement(
-							'h4',
-							null,
-							'Title'
-						),
-						_react2.default.createElement(
-							'p',
-							null,
-							'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum sapiente, rerum praesentium deleniti quo veritatis atque. Fugiat, voluptatum quis. Consequatur quae deserunt recusandae, amet culpa iste dolorem iure distinctio optio!'
-						)
-					)
+					this.state.notes.map(function (note, i) {
+						return _react2.default.createElement(_notesCard2.default, { note: note, key: 'note-' + i });
+					})
 				),
 				_react2.default.createElement(
 					'aside',
-					{ className: 'sidebar' },
+					{ className: 'sidebar', ref: function ref(_ref3) {
+							return _this2.sidebar = _ref3;
+						} },
 					_react2.default.createElement(
 						'form',
-						null,
+						{ onSubmit: this.addNote },
 						_react2.default.createElement(
 							'h3',
 							null,
@@ -20850,7 +20876,7 @@ var App = function (_React$Component) {
 						),
 						_react2.default.createElement(
 							'div',
-							{ className: 'close-btn' },
+							{ className: 'close-btn', onClick: this.showSidebar },
 							_react2.default.createElement('i', { className: 'fa fa-times' })
 						),
 						_react2.default.createElement(
@@ -20858,13 +20884,17 @@ var App = function (_React$Component) {
 							{ htmlFor: 'note-title' },
 							'Title:'
 						),
-						_react2.default.createElement('input', { type: 'text', name: 'note-title' }),
+						_react2.default.createElement('input', { type: 'text', name: 'note-title', ref: function ref(_ref) {
+								return _this2.noteTitle = _ref;
+							} }),
 						_react2.default.createElement(
 							'label',
 							{ htmlFor: 'note-text' },
 							'Text:'
 						),
-						_react2.default.createElement('textarea', { name: 'note-text' }),
+						_react2.default.createElement('textarea', { name: 'note-text', ref: function ref(_ref2) {
+								return _this2.noteText = _ref2;
+							} }),
 						_react2.default.createElement('input', { type: 'submit', value: 'Add New Note' })
 					)
 				)
@@ -20877,4 +20907,36 @@ var App = function (_React$Component) {
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));
 
-},{"react":181,"react-dom":30}]},{},[182]);
+},{"./notesCard.js":183,"react":181,"react-dom":30}],183:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+exports.default = function (props) {
+	return _react2.default.createElement(
+		"div",
+		{ className: "noteCard" },
+		_react2.default.createElement("i", { className: "fa fa-edit" }),
+		_react2.default.createElement("i", { className: "fa fa-times" }),
+		_react2.default.createElement(
+			"h4",
+			null,
+			props.note.title
+		),
+		_react2.default.createElement(
+			"p",
+			null,
+			props.note.text
+		)
+	);
+};
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+},{"react":181}]},{},[182]);

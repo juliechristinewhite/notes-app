@@ -1,38 +1,65 @@
 import React from 'react';
 import ReactDom from 'react-dom';
+import NoteCard from './notesCard.js';
 
 class App extends React.Component {
+	constructor() {
+		super();
+		this.state = {
+			notes: []
+		}
+		this.showSidebar = this.showSidebar.bind(this);
+		this.addNote = this.addNote.bind(this);
+	}
+	showSidebar(e) {
+		e.preventDefault();
+		this.sidebar.classList.toggle("show");
+	}
+	addNote(e) {
+		e.preventDefault();
+		console.log("submitted");
+		const note = {
+			title: this.noteTitle.value,
+			text: this.noteText.value
+		};
+		const newNotes = Array.from(this.state.notes);
+		newNotes.push(note);
+		this.setState({
+			notes: newNotes
+		});
+		this.noteTitle.value = "";
+		this.noteText.value = "";
+		this.showSidebar(e);
+	}
 	render() {
 		return (
 			<div>
 				<header className="mainHeader">
 					<h1>Noted</h1>
 					<nav>
-						<a href="">Add New Note</a>
+						<a href="" onClick={this.showSidebar}>Add New Note</a>
 					</nav>
 				</header>
 				<section className="notes">
-					<div className="noteCard">
-						<i className="fa fa-edit"></i>
-						<i className="fa fa-times"></i>
-						<h4>Title</h4>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum sapiente, rerum praesentium deleniti quo veritatis atque. Fugiat, voluptatum quis. Consequatur quae deserunt recusandae, amet culpa iste dolorem iure distinctio optio!</p>
-					</div>
+					{this.state.notes.map((note,i) => {
+						return (
+							<NoteCard note={note} key={`note-${i}`} />
+						)
+					})}
 				</section>
-				<aside className="sidebar">
-					<form>
+				<aside className="sidebar" ref={ref => this.sidebar = ref}>
+					<form onSubmit={this.addNote}>
 						<h3>Add New Note</h3>
-						<div className="close-btn">
+						<div className="close-btn" onClick={this.showSidebar}>
 							<i className="fa fa-times"></i>
 						</div>
 						<label htmlFor='note-title'>Title:</label>
-						<input type="text" name="note-title" />
+						<input type="text" name="note-title" ref={ref => this.noteTitle = ref} />
 						<label htmlFor="note-text">Text:</label>
-						<textarea name="note-text"></textarea>
+						<textarea name="note-text" ref={ref => this.noteText = ref}></textarea>
 						<input type="submit" value="Add New Note" />
 					</form>
 				</aside>
-
 			</div>
 		)
 	}
