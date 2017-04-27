@@ -2,6 +2,16 @@ import React from 'react';
 import ReactDom from 'react-dom';
 import NoteCard from './notesCard.js';
 
+const config = {
+    apiKey: "AIzaSyD4YuQMta78eU7U4AYx3qVH0wLkQ9igYrw",
+    authDomain: "notes-af553.firebaseapp.com",
+    databaseURL: "https://notes-af553.firebaseio.com",
+    projectId: "notes-af553",
+    storageBucket: "notes-af553.appspot.com",
+    messagingSenderId: "710076026078"
+};
+firebase.initializeApp(config);
+
 class App extends React.Component {
 	constructor() {
 		super();
@@ -10,6 +20,19 @@ class App extends React.Component {
 		}
 		this.showSidebar = this.showSidebar.bind(this);
 		this.addNote = this.addNote.bind(this);
+	}
+	componentDidMount() {
+		firebase.database().ref().on('value', (res) => {
+			const userData = res.val();
+			const dataArray = [];
+			for(let objectKey in userData) {
+				userData[objectKey].key = objectKey;
+				dataArray.push(userData[objectKey]);
+			}
+			this.setState({
+				notes: dataArray
+			})
+		});
 	}
 	showSidebar(e) {
 		e.preventDefault();
@@ -22,14 +45,19 @@ class App extends React.Component {
 			title: this.noteTitle.value,
 			text: this.noteText.value
 		};
-		const newNotes = Array.from(this.state.notes);
-		newNotes.push(note);
-		this.setState({
-			notes: newNotes
-		});
+		
+		const dbRef = firebase.database().ref();
+
+		dbRef.push(note);
+
 		this.noteTitle.value = "";
 		this.noteText.value = "";
 		this.showSidebar(e);
+	}
+	removeNote(key) {
+		console.log(key);
+		const dbRef = firebase.database().ref(key);
+		dbRef.remove();
 	}
 	render() {
 		return (
@@ -43,7 +71,7 @@ class App extends React.Component {
 				<section className="notes">
 					{this.state.notes.map((note,i) => {
 						return (
-							<NoteCard note={note} key={`note-${i}`} />
+							<NoteCard note={note} key={`note-${i}`} removeNote={this.removeNote}/>
 						)
 					})}
 				</section>
