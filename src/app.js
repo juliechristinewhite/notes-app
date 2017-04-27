@@ -20,6 +20,8 @@ class App extends React.Component {
 		}
 		this.showSidebar = this.showSidebar.bind(this);
 		this.addNote = this.addNote.bind(this);
+		this.showCreate = this.showCreate.bind(this);
+		this.createUser = this.createUser.bind(this);
 	}
 	componentDidMount() {
 		firebase.database().ref().on('value', (res) => {
@@ -59,6 +61,33 @@ class App extends React.Component {
 		const dbRef = firebase.database().ref(key);
 		dbRef.remove();
 	}
+	showCreate(e) {
+		e.preventDefault();
+		this.overlay.classList.toggle('show');
+		this.createUserModal.classList.toggle('show');
+	}
+	createUser(e) {
+		e.preventDefault();
+		//check the passwords match
+		//if so create user
+		const email = this.createEmail.value;
+		const password = this.createPassword.value;
+		const confirm = this.confirmPassword.value;
+		if(password === confirm) {
+			firebase.auth()
+				.createUserWithEmailAndPassword(email, password)
+				.then((res) => {
+					this.showCreate(e);
+				})
+				.catch((err) => {
+					alert(err.message)
+				})
+		}
+		else {
+			alert("Passwords must match!")
+		}
+
+	}
 	render() {
 		return (
 			<div>
@@ -66,8 +95,10 @@ class App extends React.Component {
 					<h1>Noted</h1>
 					<nav>
 						<a href="" onClick={this.showSidebar}>Add New Note</a>
+						<a href="" onClick={this.showCreate}>Create Account</a>
 					</nav>
 				</header>
+				<div className="overlay" ref={ref => this.overlay = ref}></div>
 				<section className="notes">
 					{this.state.notes.map((note,i) => {
 						return (
@@ -88,9 +119,35 @@ class App extends React.Component {
 						<input type="submit" value="Add New Note" />
 					</form>
 				</aside>
+
+				<div className="createUserModal modal" ref={ref => this.createUserModal = ref}>
+					<div className="close">
+						<i className="fa fa-times"></i>
+					</div>
+					<form action="" onSubmit={this.createUser}>
+						<div>
+							<label htmlFor="createEmail">Email: </label>
+							<input type="text" name="createEmail" ref={ref => this.createEmail = ref} />
+						</div>
+						<div>
+							<label htmlFor="createPassword">Password</label>
+							<input type="password" name="createPassword" ref={ref => this.createPassword = ref} />
+						</div>
+						<div>
+							<label htmlFor="confirmPassword">Confirm Password</label>
+							<input type="password" name="confirmPassword" ref={ref => this.confirmPassword = ref} />
+						</div>
+						<div>
+							<input type="submit" value="Create" />
+						</div>
+					</form>
+				</div> 
+
 			</div>
 		)
 	}
 }
 
-ReactDom.render(<App/>,document.getElementById('app'));
+ReactDom.render(<App />,document.getElementById('app'));
+
+//video 6/7 - 18:40 where we left off

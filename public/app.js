@@ -20811,6 +20811,8 @@ var App = function (_React$Component) {
 		};
 		_this.showSidebar = _this.showSidebar.bind(_this);
 		_this.addNote = _this.addNote.bind(_this);
+		_this.showCreate = _this.showCreate.bind(_this);
+		_this.createUser = _this.createUser.bind(_this);
 		return _this;
 	}
 
@@ -20863,9 +20865,37 @@ var App = function (_React$Component) {
 			dbRef.remove();
 		}
 	}, {
+		key: 'showCreate',
+		value: function showCreate(e) {
+			e.preventDefault();
+			this.overlay.classList.toggle('show');
+			this.createUserModal.classList.toggle('show');
+		}
+	}, {
+		key: 'createUser',
+		value: function createUser(e) {
+			var _this3 = this;
+
+			e.preventDefault();
+			//check the passwords match
+			//if so create user
+			var email = this.createEmail.value;
+			var password = this.createPassword.value;
+			var confirm = this.confirmPassword.value;
+			if (password === confirm) {
+				firebase.auth().createUserWithEmailAndPassword(email, password).then(function (res) {
+					_this3.showCreate(e);
+				}).catch(function (err) {
+					alert(err.message);
+				});
+			} else {
+				alert("Passwords must match!");
+			}
+		}
+	}, {
 		key: 'render',
 		value: function render() {
-			var _this3 = this;
+			var _this4 = this;
 
 			return _react2.default.createElement(
 				'div',
@@ -20885,20 +20915,28 @@ var App = function (_React$Component) {
 							'a',
 							{ href: '', onClick: this.showSidebar },
 							'Add New Note'
+						),
+						_react2.default.createElement(
+							'a',
+							{ href: '', onClick: this.showCreate },
+							'Create Account'
 						)
 					)
 				),
+				_react2.default.createElement('div', { className: 'overlay', ref: function ref(_ref) {
+						return _this4.overlay = _ref;
+					} }),
 				_react2.default.createElement(
 					'section',
 					{ className: 'notes' },
 					this.state.notes.map(function (note, i) {
-						return _react2.default.createElement(_notesCard2.default, { note: note, key: 'note-' + i, removeNote: _this3.removeNote });
+						return _react2.default.createElement(_notesCard2.default, { note: note, key: 'note-' + i, removeNote: _this4.removeNote });
 					})
 				),
 				_react2.default.createElement(
 					'aside',
-					{ className: 'sidebar', ref: function ref(_ref3) {
-							return _this3.sidebar = _ref3;
+					{ className: 'sidebar', ref: function ref(_ref4) {
+							return _this4.sidebar = _ref4;
 						} },
 					_react2.default.createElement(
 						'form',
@@ -20918,18 +20956,74 @@ var App = function (_React$Component) {
 							{ htmlFor: 'note-title' },
 							'Title:'
 						),
-						_react2.default.createElement('input', { type: 'text', name: 'note-title', ref: function ref(_ref) {
-								return _this3.noteTitle = _ref;
+						_react2.default.createElement('input', { type: 'text', name: 'note-title', ref: function ref(_ref2) {
+								return _this4.noteTitle = _ref2;
 							} }),
 						_react2.default.createElement(
 							'label',
 							{ htmlFor: 'note-text' },
 							'Text:'
 						),
-						_react2.default.createElement('textarea', { name: 'note-text', ref: function ref(_ref2) {
-								return _this3.noteText = _ref2;
+						_react2.default.createElement('textarea', { name: 'note-text', ref: function ref(_ref3) {
+								return _this4.noteText = _ref3;
 							} }),
 						_react2.default.createElement('input', { type: 'submit', value: 'Add New Note' })
+					)
+				),
+				_react2.default.createElement(
+					'div',
+					{ className: 'createUserModal modal', ref: function ref(_ref8) {
+							return _this4.createUserModal = _ref8;
+						} },
+					_react2.default.createElement(
+						'div',
+						{ className: 'close' },
+						_react2.default.createElement('i', { className: 'fa fa-times' })
+					),
+					_react2.default.createElement(
+						'form',
+						{ action: '', onSubmit: this.createUser },
+						_react2.default.createElement(
+							'div',
+							null,
+							_react2.default.createElement(
+								'label',
+								{ htmlFor: 'createEmail' },
+								'Email: '
+							),
+							_react2.default.createElement('input', { type: 'text', name: 'createEmail', ref: function ref(_ref5) {
+									return _this4.createEmail = _ref5;
+								} })
+						),
+						_react2.default.createElement(
+							'div',
+							null,
+							_react2.default.createElement(
+								'label',
+								{ htmlFor: 'createPassword' },
+								'Password'
+							),
+							_react2.default.createElement('input', { type: 'password', name: 'createPassword', ref: function ref(_ref6) {
+									return _this4.createPassword = _ref6;
+								} })
+						),
+						_react2.default.createElement(
+							'div',
+							null,
+							_react2.default.createElement(
+								'label',
+								{ htmlFor: 'confirmPassword' },
+								'Confirm Password'
+							),
+							_react2.default.createElement('input', { type: 'password', name: 'confirmPassword', ref: function ref(_ref7) {
+									return _this4.confirmPassword = _ref7;
+								} })
+						),
+						_react2.default.createElement(
+							'div',
+							null,
+							_react2.default.createElement('input', { type: 'submit', value: 'Create' })
+						)
 					)
 				)
 			);
@@ -20940,6 +21034,8 @@ var App = function (_React$Component) {
 }(_react2.default.Component);
 
 _reactDom2.default.render(_react2.default.createElement(App, null), document.getElementById('app'));
+
+//video 6/7 - 18:40 where we left off
 
 },{"./notesCard.js":183,"react":181,"react-dom":30}],183:[function(require,module,exports){
 "use strict";
